@@ -133,7 +133,7 @@ foreach var of varlist dr1ikcal dr1iprot dr1itfat dr1isfat dr1ipfat dr1imfat dr1
 /* SAMPLE SIZE PER STRATA/YEAR */
 putexcel set "C:\Users\09453022\OneDrive - Pepsico\Epidemiology - Documents\Projects\Master_Trends\tester3.xlsx", modify sheet(SampleSizes)
 
-levelsof year if filter == 1, local(years)
+levelsof year if filter == 1, local(years) /*unique years*/
 
 local j=1  
 quietly: putexcel a`j'=("POPULATION") b`j'=("2001-2") c`j'=("2003-4") d`j'=("2005-6") e`j'=("2007-8") f`j'=("2009-10") g`j'=("2011-12") h`j'=("2013-14") i`j'=("2015-16") j`j'=("2017-20") k`j'=("2021-23") 
@@ -142,11 +142,15 @@ quietly: putexcel a`j'=("POPULATION") b`j'=("2001-2") c`j'=("2003-4") d`j'=("200
 foreach subgroup in total female male child adolescents age_0_5 age_6_10 age_11_14 age_15_19 age_20_34 age_35_49 age_50_69 age_70 female_19 male_19 	 female_20_49 male_20_49 female_50 male_50 NHW NHB Mexican_American below_HS HS some_college college_above lower_income medium_income higher_income {
 	local j=`j'+1
 	quietly putexcel A`j' = ("`subgroup'")
+	local col = 2 // Column B = 2
 	foreach yr of local years {
 	* unweighted sample sizes across years
 	count if filter == 1 & `subgroup' == 1 & year == `yr'
 	local n = r(N)
-	quietly: putexcel b`j'=(`n') c`j'=(`n') d`j'=(`n') e`j'=(`n') f`j'=(`n') g`j'=(`n') h`j'=(`n') i`j'=(`n') j`j'=(`n') k`j'=(`n')
+	*quietly: putexcel b`j'=(`n') c`j'=(`n') d`j'=(`n') e`j'=(`n') f`j'=(`n') g`j'=(`n') h`j'=(`n') i`j'=(`n') j`j'=(`n') k`j'=(`n')
+	local letter = char(64 + `col')
+    quietly putexcel `letter'`j' = (`n')
+	local col = `col' + 1
 	}
 }
 	
